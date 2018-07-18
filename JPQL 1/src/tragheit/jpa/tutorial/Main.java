@@ -1,13 +1,9 @@
 package tragheit.jpa.tutorial;
 
-import java.util.Iterator;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import tragheit.jpa.tutorial.domain.Employee;
 
@@ -20,15 +16,27 @@ public class Main {
 		entityManager = entityManagerFactory.createEntityManager();
 
 		addEmployees();
+
+		Query query = entityManager.createQuery(
+				"select avg(e.salary), min(e.salary), max(e.salary), sum(e.salary), count(e.salary) from Employee e");
+
+		Object[] result = (Object[]) query.getSingleResult();
+		System.out.println("Œrednia: " + result[0]);
+		System.out.println("Min: " + result[1]);
+		System.out.println("Max: " + result[2]);
+		System.out.println("Suma: " + result[3]);
+		System.out.println("Iloœæ: " + result[4]);
+
+		Query query2 = entityManager.createQuery(
+				"select substring(e.firstName, 1, 3), trim(e.lastName), lower(e.firstName), upper(e.firstName), length(e.firstName) from Employee e where e.firstName = 'Karol' ");
 		
-		TypedQuery<Employee> query = entityManager.createQuery("select e from Employee e where e.salary > :minSalary", Employee.class);
-		query.setParameter("minSalary", 3000.0);
+		Object[] result2 = (Object[]) query2.getSingleResult();
+		System.out.println("3 litery imienia: " + result2[0]);
+		System.out.println("nazwisko bez spacji: " + result2[1]);
+		System.out.println("imie ma³ymi: " + result2[2]);
+		System.out.println("imiê wielkimi: " + result2[3]);
+		System.out.println("d³ugoœc imienia: " + result2[4]);
 		
-		for (Employee e : query.getResultList()) {
-		System.out.println("imie: " + e.getFirstName());
-		System.out.println("nazwisko: " + e.getLastName());
-		System.out.println("pensja: " + e.getSalary() + "\n");
-		}
 		
 		entityManager.close();
 		entityManagerFactory.close();
