@@ -20,37 +20,15 @@ public class Main {
 		entityManager = entityManagerFactory.createEntityManager();
 
 		addEmployees();
-
-		// ********jesli spodziewamy siê tylko jednego obiektu jako odpowiedŸ********
-		// TypedQuery<Employee> query = entityManager.createQuery
-		// ("select e from Employee e where e.lastName = 'Paj¹k'", Employee.class);
-
-		// Employee employee = query.getSingleResult();
-		// System.out.println(employee.getFirstName());
-		// System.out.println(employee.getLastName());
-		// System.out.println(employee.getSalary());
-
-		// ********jeœli spodziewamy siê kilku obiektów jako odpowiedŸ********
-		// TypedQuery<Employee> query = entityManager.createQuery
-		// ("select e from Employee e where e.salary > 3000 order by
-		// e.salary",Employee.class);
-
-		// List<Employee> employees = query.getResultList();
-
-		// for (Employee employee : employees) {
-		// System.out.println(employee.getFirstName() + "\n " + employee.getLastName() +
-		// " " + employee.getSalary());
-		// }
 		
-		Query query = entityManager.createQuery("select concat(e.firstName, ' ', e.lastName), e.salary * 0.2 from Employee e");
-		Iterator<?> iterator = query.getResultList().iterator();
-		while (iterator.hasNext()) {
-			Object[] item = (Object[]) iterator.next();
-			String name = (String) item[0];
-			double tax = (double) item[1];
-			System.out.println(name + " has to pay " + tax);
+		TypedQuery<Employee> query = entityManager.createQuery("select e from Employee e where e.salary > :minSalary", Employee.class);
+		query.setParameter("minSalary", 3000.0);
+		
+		for (Employee e : query.getResultList()) {
+		System.out.println("imie: " + e.getFirstName());
+		System.out.println("nazwisko: " + e.getLastName());
+		System.out.println("pensja: " + e.getSalary() + "\n");
 		}
-		
 		
 		entityManager.close();
 		entityManagerFactory.close();
